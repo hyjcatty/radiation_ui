@@ -16,7 +16,7 @@ import './custom3.css';
 
 var basic_address = getRelativeURL()+"/";
 var request_head= basic_address+"request.php";
-var device_id = getURLafterpound();
+var device_id = getWechartScope();
 var warning_level;
 var alarm_level;
 var current_cycle = 5000;
@@ -140,6 +140,17 @@ function getURLafterpound(){
     if(url.indexOf("#")!=-1){
         var arrUrl= url.split("#");
         if(arrUrl[1].length>0) return arrUrl[1];
+    }
+    return "test";
+}
+
+function getWechartScope(){
+    var url = document.location.toString();
+    if(url.indexOf("scope=")!=-1){
+        var arrUrl= url.split("scope=");
+        var scope_value = arrUrl[1].split("&")[0];
+
+        if(scope_value.length>0 ) return scope_value;
     }
     return "test";
 }
@@ -299,9 +310,10 @@ function init_charts(){
         });
 }
 
-
+//console.log("deviceid:"+device_id);
 var react_element = <App/>;
 app_handle = ReactDOM.render(react_element,document.getElementById('app'));
+
 get_size();
 alarm_value();
 //init_charts();
