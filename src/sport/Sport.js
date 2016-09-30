@@ -28,8 +28,11 @@ export default class Sport extends Component {
 
             color_current:"count green",
             color_average:"count green",
-            chart_height_1:"200px",
-            chart_height_2:"100px"
+            chart_height_1:200,
+            chart_height_2:100,
+            topSize:100,
+            footSize:50,
+            foottxt:"Copy right to hyj"
         };
         this.style = {
         }
@@ -37,8 +40,9 @@ export default class Sport extends Component {
     updatealarm(warning,alarm){
         this.setState({alarm:alarm,warning:warning})
     }
-    updatehight(chart_height){
-        this.setState({chart_height_1:parseInt(chart_height *1.5)+"px",chart_height_2:parseInt(chart_height)+"px;padding:10px 25px"})
+    updateheight(chart_height){
+        //console.log("set chart height:"+ chart_height);
+        this.setState({chart_height_1:parseInt(chart_height *0.4)+"px",chart_height_2:parseInt(chart_height*0.2)+"px",topSize:parseInt(chart_height*0.3),footSize:parseInt(chart_height*0.1)})
     }
     updatecurrent(current){
         let percent = 100;
@@ -68,6 +72,10 @@ export default class Sport extends Component {
 
         this.setState({current:current,percent:percent.toString()+"%",count:count,average:average,color_current:color_current,color_average:color_average})
     }
+    updatefoottxt(txt){
+        let temp = this.state.foottxt + "######"+txt;
+        this.setState({foottxt:temp});
+    }
     updatehistory(history){
         this.state.history = history;
     }
@@ -80,14 +88,14 @@ export default class Sport extends Component {
                     <div className="col-md-12 col-sm-12 col-xs-12">
                         <div className="x_panel" >
                             <div className="col-md-6 col-sm-6 col-xs-6 tile_stats_count">
-                                <span className="count_top"><i className="fa fa-user"></i> Current Value</span>
-                                <div className={this.state.color_current} id="current_value">{this.state.current}</div>
-                                <span className="count_bottom"><i id="audit_percent">{this.state.percent} </i>From last result</span>
+                                <span className="count_top" style={{fontSize:parseInt(this.state.topSize/15)}}><i className="fa fa-user"></i> Current Value</span>
+                                <div className={this.state.color_current} id="current_value"  style={{fontSize:parseInt(this.state.topSize*0.25)}}>{this.state.current}</div>
+                                <span className="count_bottom" style={{fontSize:parseInt(this.state.topSize/20)}}><i id="audit_percent">{this.state.percent} </i>From last result</span>
                             </div>
                             <div className="col-md-6 col-sm-6 col-xs-6 tile_stats_count" >
-                                <span className="count_top"><i className="fa fa-clock-o"></i> Average Value</span>
-                                <div className={this.state.color_average} id="average_value">{this.state.average}</div>
-                                <span className="count_bottom"><i id="audit_counts">{this.state.count} </i> times account</span>
+                                <span className="count_top" style={{fontSize:parseInt(this.state.topSize/15)}}><i className="fa fa-clock-o"></i> Average Value</span>
+                                <div className={this.state.color_average} id="average_value" style={{fontSize:parseInt(this.state.topSize*0.25)}}>{this.state.average}</div>
+                                <span className="count_bottom" style={{fontSize:parseInt(this.state.topSize/20)}}><i id="audit_counts">{this.state.count} </i> times account</span>
                             </div>
                         </div>
                     </div>
@@ -101,8 +109,8 @@ export default class Sport extends Component {
                             </div>
                             <div className="x_content">
                                 <div>
-                                    <div className="demo-container" style={{minHeight:this.state.chart_height_1}}>
-                                        <div id="placeholder33x" className="demo-placeholder" style={{minHeight:this.style.chart_height_1}}></div>
+                                    <div className="demo-container" style={{height:this.state.chart_height_1}}>
+                                        <div id="placeholder33x" className="demo-placeholder" style={{height:this.state.chart_height_1}}></div>
                                     </div>
                                 </div>
                             </div>
@@ -119,8 +127,8 @@ export default class Sport extends Component {
                             <div className="x_content">
                                 <div className="row" style={{borderBottom:'1px, solid #E0E0E0',paddingBottom:'5px',marginBottom:'5px'}}>
                                     <div style={{overflow:'hidden'}}>
-                            <span id="sparkline_one" style={{minHeight:this.state.chart_height_2}}>
-                                <canvas width="200" height="60" style={{display:'inline-block',verticalAlign:'top',width:'94px',height:'30px'}}>
+                            <span id="sparkline_one" style={{height:this.state.chart_height_2}}>
+                                <canvas width="200"  style={{display:'inline-block',verticalAlign:'top',width:'100px',minHeight:this.state.chart_height_2}}>
 
                                 </canvas>
                             </span>
@@ -133,7 +141,7 @@ export default class Sport extends Component {
                 <div className="row">
                     <div className="col-md-12 col-sm-12 col-xs-12">
                         <div className="x_panel">
-                            <div className="hyj_footer" id="footer" style={{float:'right'}}>Copy right to hyj</div>
+                            <div className="hyj_footer" id="footer" style={{float:'right'}}>{this.state.foottxt}</div>
                         </div>
                     </div>
                 </div>
