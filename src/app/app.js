@@ -357,7 +357,7 @@ var react_element = <App/>;
 app_handle = ReactDOM.render(react_element,document.getElementById('app'));
 
 get_size();
-//log(document.location.toString());
+log(document.location.toString());
 alarm_value();
 //init_charts();
 //current_value();
