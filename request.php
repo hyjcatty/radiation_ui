@@ -26,6 +26,25 @@ function _urlencode($elem)
 $key=$_GET["action"];
 //echo $key;
 switch ($key){
+    case "wechat_login":
+        $code = $_GET["code"];
+        $weixin =  file_get_contents("https://api.weixin.qq.com/sns/oauth2/access_token?appid=wxf2150c4d2941b2ab&secret=ab95997f454e04b77911c18d09807831&code=".$code."&grant_type=authorization_code");//通过code换取网页授权access_token
+        $jsondecode = json_decode($weixin); //对JSON格式的字符串进行编码
+        $array = get_object_vars($jsondecode);//转换成数组
+
+        $openid = $array['openid'];//输出openid
+         if(!isset($openid)&&empty($openid)){ $openid="Not Autherized";}
+        $retval=array(
+            'status'=>'true',
+            'ret'=>$openid
+        );
+
+        $file_txt = fopen("./log.txt",'w');
+        fwrite($file_txt,"code=".$code."#openid=".$openid."#");
+        fclose($file_txt);
+        $jsonencode = _encode($retval);
+        echo $jsonencode; break;
+
     case "personal_bracelet_radiation_current":
         /*
             var device = data.id;

@@ -76,6 +76,9 @@ export default class Sport extends Component {
         let temp = this.state.foottxt + "######"+txt;
         this.setState({foottxt:temp});
     }
+    modifyfoottxt(txt){
+        this.setState({foottxt:temp});
+    }
     updatehistory(history){
         this.state.history = history;
     }

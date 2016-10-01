@@ -16,7 +16,8 @@ var clean = require('gulp-clean');
 var htmlmin = require('gulp-htmlmin');
 var option = {
 
-    buildPath: "./dist"
+    //buildPath: "./dist"
+    buildPath: "../www/hyj/sport_react/"
 }
 var option_html = {
     collapseWhitespace:true,

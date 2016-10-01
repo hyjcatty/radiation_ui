@@ -16,8 +16,9 @@ import './custom3.css';
 
 var debug = true;
 var basic_address = getRelativeURL()+"/";
+//var basic_address = "http://www.hkrob.com/hyj/sport_react/";
 var request_head= basic_address+"request.php";
-var device_id = getWechatScope();
+
 var warning_level;
 var alarm_level;
 var current_cycle = 5000;
@@ -31,11 +32,9 @@ var average=0;
 var chart_series;
 var app_handle;
 
-var wechat_appid="wxf2150c4d2941b2ab";
-var wechat_secretid = "ab95997f454e04b77911c18d09807831"
-var wechat_auth_url= "https://api.weixin.qq.com/sns/oauth2/access_token?appid="+wechat_appid+"&secret="+wechat_secretid+"&code=";
-var wechat_auth_url_tail = "&grant_type=authorization_code";
 var wechat_openid = "test";
+var device_id = "test";
+//var device_id ="test";
 //var Icon = require('react-font-awesome').Icon;
 class App extends Component{
 
@@ -51,6 +50,9 @@ class App extends Component{
     }
     updatefoottxt(txt){
         this.refs.sportHandle.updatefoottxt(txt);
+    }
+    modifyfoottxt(txt){
+        this.refs.sportHandle.modifyfoottxt(txt);
     }
     render() {
         return(
@@ -80,7 +82,7 @@ function log(str){
 
 }
 function current_value() {
-
+    if(wechat_openid == "test" || wechat_openid=="Not Autherized") return;
 
     var map = {
         action: "personal_bracelet_radiation_current",
@@ -109,27 +111,37 @@ function current_value() {
 
 
 function get_wechat_appid(code){
-    wechat_auth_url = wechat_auth_url+code+wechat_auth_url_tail;
-    var map={};
-    jQuery.get(wechart_auth_url, map, function (data) {
-        //log(data);
+    var map = {
+        action: "wechat_login",
+        code : code
+    };
+    jQuery.get(request_head, map, function (data) {
         var result=JSON.parse(data);
-        wechat_appid = result.openid;
-        if(result.hasOwnProperty("openid") ){
-            wechat_appid = result.openid;
+        var ret = result.status;
+        if(ret == "true"){
+            wechat_openid = result.ret;
+            if(wechat_openid == "Not Autherized"){
+                device_id = "test";
+                app_handle.modifyfoottxt("Device is not autherized!");
+            }else{
+                device_id = wechat_openid;
+            }
         }else{
-            wechat_error();
+            device_error();
         }
+        log("device_id ="+device_id);
+        log("wechatid ="+wechat_openid);
 
     });
 }
 
 function alarm_value() {
+
     var map = {
         action: "personal_bracelet_radiation_alarm"
     };
     jQuery.get(request_head, map, function (data) {
-        log(data);
+        //log(data);
         var result=JSON.parse(data);
         var ret = result.status;
         if(ret == "true"){
@@ -139,6 +151,9 @@ function alarm_value() {
             init_charts();
             current_value();
             history_value();
+
+            setInterval(current_value,current_cycle);
+            setInterval(history_value,history_cycle);
         }else{
             device_error();
         }
@@ -182,6 +197,7 @@ function getWechatScope(){
     if(url.indexOf("code=")!=-1){
         var arrUrl= url.split("code=");
         var scope_value = arrUrl[1].split("&")[0];
+        //log("code="+scope_value);
         if(scope_value.length>0 ){
             get_wechat_appid(scope_value);
             return scope_value;
@@ -241,6 +257,7 @@ function update_history(){
 }
 
 function history_value() {
+    if(wechat_openid == "test" || wechat_openid=="Not Autherized") return;
     var map = {
         action: "personal_bracelet_radiation_history",
         id : device_id
@@ -312,7 +329,7 @@ function get_size(){
         app_handle.updateheight(winWidth);
         chart_height=parseInt(winWidth*0.4);
     }
-    log("window width = "+winWidth+";window height = "+ winHeight+"chart_height="+chart_height);
+    //log("window width = "+winWidth+";window height = "+ winHeight+"chart_height="+chart_height);
 
 }
 
@@ -355,12 +372,14 @@ function init_charts(){
 //console.log("deviceid:"+device_id);
 var react_element = <App/>;
 app_handle = ReactDOM.render(react_element,document.getElementById('app'));
+getWechatScope();
 
 get_size();
 log(document.location.toString());
-alarm_value();
+
+window.setTimeout(alarm_value,2000);
+
 //init_charts();
 //current_value();
 //history_value();
-setInterval(current_value,current_cycle);
-setInterval(history_value,history_cycle);
+
